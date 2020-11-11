@@ -42,6 +42,10 @@ if (isset($_POST["search"]) && !empty($query)) {
                         <div>Points Change:</div>
                         <div><?php safer_echo($r["points_change"]); ?></div>
                     </div>
+		    <div>
+			<div>Reason:</div>
+			<div><?php safer_echo($r["reason"]); ?></div>
+		    </div>
                     <div>
                         <a type="button" href="test_edit_pointshistory.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
                         <a type="button" href="test_view_pointshistory.php?id=<?php safer_echo($r['id']); ?>">View</a>

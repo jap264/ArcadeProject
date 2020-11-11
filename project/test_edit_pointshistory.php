@@ -52,7 +52,7 @@ if (isset($id)) {
 }
 //get scores for dropdown
 $db = getDB();
-$stmt = $db->prepare("SELECT id from Scores LIMIT 10");
+$stmt = $db->prepare("SELECT id,score from Scores LIMIT 10");
 $r = $stmt->execute();
 $scores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -65,7 +65,7 @@ $scores = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <option value="-1">None</option>
             <?php foreach ($scores as $score): ?>
                 <option value="<?php safer_echo($score["id"]); ?>" <?php echo ($result["user_id"] == $score["id"] ? 'selected="selected"' : ''); ?>
-                ><?php safer_echo($score["user"]); ?></option>
+                ><?php safer_echo($score["score"]); ?></option>
             <?php endforeach; ?>
         </select>
         <label>Points Change</label>
