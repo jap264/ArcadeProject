@@ -110,15 +110,8 @@ if (isset($_POST["saved"])) {
 ?>
 
 <?php
-if (!has_role("Admin")) {
-    //this will redirect to login and kill the rest of this script (prevent it from executing)
-    flash("You don't have permission to access this page");
-    die(header("Location: login.php"));
-}
-?>
-
-<?php
 //we'll put this at the top so both php block have access to it
+$id = get_user_id();
 if (isset($_GET["id"])) {
     $id = $_GET["id"];
 }
@@ -128,9 +121,9 @@ if (isset($_GET["id"])) {
 $result = [];
 if (isset($id)) {
     $db = getDB();
-    $stmt = $db->prepare("SELECT score.id,username,score,score.created, user_id, Users.username FROM Scores as score JOIN Users on score.user_id = Users.id where score.id = :id");
+    $stmt = $db->prepare("SELECT score from Scores where user_id = :id LIMIT 10");
     $r = $stmt->execute([":id" => $id]);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if (!$result) {
         $e = $stmt->errorInfo();
         flash($e[2]);
@@ -139,22 +132,19 @@ if (isset($id)) {
 ?>
 <?php if (isset($result) && !empty($result)): ?>
     <div class="card">
-        <div class="card-title">
-            <?php safer_echo($result["username"]); ?>
-        </div>
         <div class="card-body">
             <div>
-                <p>Stats</p>
-                <div>Score: <?php safer_echo($result["score"]); ?></div>
-                <div>Created: <?php safer_echo($result["created"]); ?></div>
-                <div>Owned by: <?php safer_echo($result["username"]); ?></div>
+                <p>Last 10 Scores:</p>
+                <?php foreach ($result as $r): ?>
+                <div> <?php safer_echo($r["score"]); ?></div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
 <?php else: ?>
  <p>Error looking up id...</p>
 <?php endif; ?>
-
+<br>
     <form method="POST">
         <label for="email">Email</label>
         <input type="email" name="email" value="<?php safer_echo(get_email()); ?>"/>
