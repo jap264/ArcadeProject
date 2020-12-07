@@ -116,6 +116,34 @@ if (isset($_GET["id"])) {
     $id = $_GET["id"];
 }
 ?>
+
+<?php
+//fetching
+$result = [];
+if (isset($id)) {
+    $db = getDB();
+    $stmt = $db->prepare("SELECT points from Users where id = :id");
+    $r = $stmt->execute([":id" => $id]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$result) {
+        $e = $stmt->errorInfo();
+        flash($e[2]);
+    }
+}
+?>
+
+<?php if (isset($result) && !empty($result)): ?>
+    <div class="card">
+        <div class="card-body">
+		<div>
+                <div> Your Points: <?php safer_echo($result["points"]); ?></div>
+        	</div>
+		</div>
+    </div>
+<?php else: ?>
+ <p>Error finding points...</p>
+<?php endif; ?>
+
 <?php
 //fetching
 $result = [];
@@ -142,7 +170,7 @@ if (isset($id)) {
         </div>
     </div>
 <?php else: ?>
- <p>Error looking up id...</p>
+ <p>No scores to show...</p>
 <?php endif; ?>
 <br>
     <form method="POST">
