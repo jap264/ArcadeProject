@@ -53,51 +53,30 @@ else {
         <h3>My Competitions (Created and Registered)</h3>
         <div class="list-group">
             <?php if (isset($results) && count($results)): ?>
-                <div class="list-group-item font-weight-bold">
-                    <div class="row">
-                        <div class="col">
-                            Name
-                        </div>
-                        <div class="col">
-                            Participants
-                        </div>
-                        <div class="col">
-                            Required Score
-                        </div>
-                        <div class="col">
-                            Reward
-                        </div>
-                        <div class="col">
-                            Expires
-                        </div>
-                        <div class="col">
-                            Actions
-                        </div>
-                    </div>
-                </div>
                 <?php foreach ($results as $r): ?>
                     <div class="list-group-item">
                         <div class="row">
-                            <div class="col">
+			    </br>
+                            <div class="col"> Comp Name:
                                 <?php safer_echo($r["name"]); ?>
                                 <?php if ($r["user_id"] == get_user_id()): ?>
                                     (Created)
                                 <?php endif; ?>
                             </div>
-                            <div class="col">
+                            <div class="col"> # of Participants: 
                                 <?php safer_echo($r["participants"]); ?>
                             </div>
-                            <div class="col">
+                            <div class="col"> Required Score:
                                 <?php safer_echo($r["min_score"]); ?>
                             </div>
-                            <div class="col">
+                            <div class="col"> Reward: 
                                 <?php safer_echo($r["reward"]); ?>
                                 <!--TODO show payout-->
                             </div>
-                            <div class="col">
+                            <div class="col"> Expires: 
                                 <?php safer_echo($r["expires"]); ?>
                             </div>
-                            <div class="col">
+                            <div class="col"> Actions: 
                                 <?php if ($r["reg"] != get_user_id()): ?>
                                     <form method="POST">
                                         <input type="hidden" name="cid" value="<?php safer_echo($r["id"]); ?>"/>
