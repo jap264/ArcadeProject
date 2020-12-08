@@ -16,10 +16,10 @@ if (isset($_POST["name"])) {
     $cost++;
     //TODO other validation
     $balance = getBalance();
-    if ($cost > $balance) {
+    /*if ($cost > $balance) {
         flash("You can't afford to create this competition", "warning");
     }
-    else {
+    else {*/
         $db = getDB();
         $expires = new DateTime();
         $days = (int)$_POST["duration"];
@@ -74,7 +74,7 @@ if (isset($_POST["name"])) {
         else {
             flash("There was a problem creating a competition: " . var_export($stmt->errorInfo(), true), "danger");
         }
-    }
+//    }
 }
 ?>
     <div class="container-fluid">
