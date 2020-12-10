@@ -11,7 +11,6 @@
 if (isset($_POST["login"])) {
     $email = null;
     $password = null;
-    $balance = get_balance();
 
     if (isset($_POST["email"])) {
         $email = $_POST["email"];

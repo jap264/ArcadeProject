@@ -18,7 +18,7 @@ if (isset($_POST["join"])) {
         if ($result) {
             $fee = (int)$result["fee"];
 	    $id = $result["id"];
-            if ($balance >= $fee) {
+           // if ($balance >= $fee) {
 		$reward = (int)$result["reward"] + ($fee * .5);
 		$participants = (int)$result["participants"] + 1;
                 $stmt = $db->prepare("INSERT INTO F20_UserCompetitions (competition_id, user_id) VALUES(:cid, :uid)");
@@ -30,14 +30,13 @@ if (isset($_POST["join"])) {
 				":participants"=>$participants,
 				":id" => $id
 			]);
-			if($r){
-				flash("Successfully joined competition!", "success");
-			}
-                    		die(header("Location: #"));
-                }
+			
+			flash("Successfully joined competition!", "success");
+                    	die(header("Location: #"));
+               /* }
                 else {
                     flash("There was a problem joining the competition: " . var_export($stmt->errorInfo(), true), "danger");
-                }
+                }*/
             }
             else {
                 flash("You can't afford to join this competition, try again later", "warning");
