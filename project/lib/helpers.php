@@ -87,4 +87,30 @@ function getBalance() {
     }
     return 0;
 }
+
+function getWinners() {
+    if (isset($_GET["id"])) {
+    	$id = $_GET["id"];
+    }	
+    
+    $comps = [];
+    if (isset($id)) {
+    	$db = getDB();
+    	$stmt = $db->prepare("SELECT id, name, created, expires, participants, min_score, first_place_per, second_place_per, third_place_per, reward FROM F20_Competitions WHERE expires < current_timestamp AND paid_out = 0");
+    	$stmt->execute([":id" => $id]);
+     	$comps = $stmt->fetchAll(PDO::FETCH_ASSOC);
+     	if(!$comps){
+        	$e = $stmt->errorInfo();
+        	flash($e[2]);
+    	}
+    }
+
+    foreach($comps as $index=>$c){
+	$db = getDB();
+	$stmt = $db->prepare("SELECT F20_UserCompetitions.user_id, max(score) from F20_UserCompetitions JOIN Scores ON Scores.user_id = F20_UserCompetitions.user_id where Scores.created BETWEEN (select created from F20_Competitions where id = 9) AND (select expires from F20_Competitions where id = 9) group by F20_UserCompetitions.user_id,score order by score desc LIMIT 3");
+	$stmt->execute([":id" => $id]);
+	
+    }
+    
+}
 ?>
