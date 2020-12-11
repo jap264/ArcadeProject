@@ -8,6 +8,7 @@ require_once(__DIR__ . "/../lib/helpers.php");
         <li><a href="home.php">Home</a></li>
         <?php if (!is_logged_in()): ?>
             <li><a href="login.php">Login</a></li>
+	    <li><a href="pong2.html">Pong Game</a></li>
             <li><a href="register.php">Register</a></li>
         <?php endif; ?>
         <?php if (has_role("Admin")): ?>
@@ -21,6 +22,7 @@ require_once(__DIR__ . "/../lib/helpers.php");
 	    <li><a href="create_competition.php">Create Competition</a></li>
             <li><a href="competitions.php">Find Competitions</a></li>
             <li><a href="my_competitions.php">My Competitions</a></li>
+            <li><a href="comp_history.php">Competition History</a></li>
 	    <li><a href="pong.html">Pong Game</a></li>
             <li><a href="logout.php">Logout</a></li>
         <?php endif; ?>
