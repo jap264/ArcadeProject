@@ -64,8 +64,9 @@ if (isset($_POST["saved"])) {
         }
     }
     if ($isValid) {
-        $stmt = $db->prepare("UPDATE Users set email = :email, username= :username where id = :id");
-        $r = $stmt->execute([":email" => $newEmail, ":username" => $newUsername, ":id" => get_user_id()]);
+        $privacy = $_POST["privacy"];
+	$stmt = $db->prepare("UPDATE Users set email = :email, username= :username, privacy = :privacy where id = :id");
+        $r = $stmt->execute([":email" => $newEmail, ":username" => $newUsername, ":privacy" => $privacy, ":id" => get_user_id()]);
         if ($r) {
             flash("Updated profile");
         }
@@ -115,6 +116,22 @@ $id = get_user_id();
 if (isset($_GET["id"])) {
     $id = $_GET["id"];
 }
+?>
+<?php
+//fetching
+$result = [];
+if (isset($id)) {
+    $db = getDB();
+    $stmt = $db->prepare("SELECT privacy from Users where id = :id");
+    $r = $stmt->execute([":id" => $id]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$result) {
+        $e = $stmt->errorInfo();
+        flash($e[2]);
+    }
+}
+
+$privacy = $result["privacy"];
 ?>
 
 <?php
@@ -238,6 +255,8 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <input type="password" name="password"/>
         <label for="cpw">Confirm Password</label>
         <input type="password" name="confirm"/>
+	<label for="priv"> 0 For Public Profile, 1 For Private Profile</label>
+	<input type="private" name="private"/>
         <input type="submit" name="saved" value="Save Profile"/>
     </form>
 <?php require(__DIR__ . "/partials/flash.php");
