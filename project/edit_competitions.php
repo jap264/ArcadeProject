@@ -20,19 +20,14 @@ if (isset($_POST["save"])) {
     if ($cost <= 0) {
         $cost = 0;
     }
-    $cost++;
     //TODO other validation
     $balance = getBalance();
-    /*if ($cost > $balance) {
-        flash("You can't afford to create this competition", "warning");
-    }
-    else {*/
         $db = getDB();
         $expires = new DateTime();
         $days = (int)$_POST["duration"];
         $expires->add(new DateInterval("P" . $days . "D"));
         $expires = $expires->format("Y-m-d H:i:s");
-        $query = "UPDATE F20_Competitions set name = :name, duration = :duration, expires = :expries, cost = :cost, min_score = :min_score, first_place_per = :fp, second_place_per = :sp, third_place_per = :tp, fee = :fee, user_id = :uid, reward = :reward WHERE id = :id)";
+        $query = "UPDATE F20_Competitions set name = :name, duration = :duration, expires = :expires, cost = :cost, min_score = :min_score, first_place_per = :fp, second_place_per = :sp, third_place_per = :tp, fee = :fee, user_id = :uid, reward = :reward WHERE id = :id)";
         $stmt = $db->prepare($query);
         $params = [
             ":name" => $_POST["name"],
@@ -81,7 +76,6 @@ if (isset($_POST["save"])) {
         else {
             flash("There was a problem updating this competition: " . var_export($stmt->errorInfo(), true), "danger");
         }
-//    }
 }
 ?>
 
