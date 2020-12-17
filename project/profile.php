@@ -64,8 +64,9 @@ if (isset($_POST["saved"])) {
         }
     }
     if ($isValid) {
-        $stmt = $db->prepare("UPDATE Users set email = :email, username= :username where id = :id");
-        $r = $stmt->execute([":email" => $newEmail, ":username" => $newUsername, ":id" => get_user_id()]);
+        $privacy = $_POST["privacy"];
+	$stmt = $db->prepare("UPDATE Users set email = :email, username= :username, privacy = :privacy where id = :id");
+        $r = $stmt->execute([":email" => $newEmail, ":username" => $newUsername, ":privacy" => $privacy, ":id" => get_user_id()]);
         if ($r) {
             flash("Updated profile");
         }
@@ -115,6 +116,23 @@ $id = get_user_id();
 if (isset($_GET["id"])) {
     $id = $_GET["id"];
 }
+?>
+
+<?php
+//fetching
+$result = [];
+if (isset($id)) {
+    $db = getDB();
+    $stmt = $db->prepare("SELECT privacy from Users where id = :id");
+    $r = $stmt->execute([":id" => $id]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$result) {
+        $e = $stmt->errorInfo();
+        flash($e[2]);
+    }
+}
+
+$privacy = $result["privacy"];
 ?>
 
 <?php
@@ -229,15 +247,24 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <br>
     <form method="POST">
+	<?if($privacy == 0):?>
         <label for="email">Email</label>
         <input type="email" name="email" value="<?php safer_echo(get_email()); ?>"/>
-        <label for="username">Username</label>
+        <?endif;?>
+	<?else:?>
+        <value = ""/>
+        <?endif;?>
+	<label for="username">Username</label>
         <input type="text" maxlength="60" name="username" value="<?php safer_echo(get_username()); ?>"/>
         <!-- DO NOT PRELOAD PASSWORD-->
         <label for="pw">Password</label>
         <input type="password" name="password"/>
         <label for="cpw">Confirm Password</label>
         <input type="password" name="confirm"/>
+	<label for="privacy"> 0 For Public Profile, 1 For Private Profile</label>
+	<select type="number" name="privacy"/>
+		<option value="0">0</option>
+		<option value="1">1</option>
         <input type="submit" name="saved" value="Save Profile"/>
     </form>
 <?php require(__DIR__ . "/partials/flash.php");

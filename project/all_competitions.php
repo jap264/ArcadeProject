@@ -19,7 +19,50 @@ if(isset($_GET["page"])){
 }
 
 $db = getDB();
-$stmt = $db->prepare("SELECT count(*) as total FROM F20_Competitions c LEFT JOIN (SELECT * FROM F20_UserCompetitions where user_id = :id) as UC on c.id = UC.competition_id WHERE (UC.user_id = :id OR c.user_id = :id) ORDER BY expires ASC LIMIT 10");
+if (isset($_POST["join"])) {
+    $balance = getBalance();
+    //prevent user from joining expired or paid out comps
+    $stmt = $db->prepare("select fee,participants,reward,id from F20_Competitions where id = :id && expires > current_timestamp && paid_out = 0");
+    $r = $stmt->execute([":id" => $_POST["cid"]]);
+    if ($r) {
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $fee = (int)$result["fee"];
+	    $id = $result["id"];
+           // if ($balance >= $fee) {
+		$reward = (int)$result["reward"] + ($fee * .5);
+		$participants = (int)$result["participants"] + 1;
+                $stmt = $db->prepare("INSERT INTO F20_UserCompetitions (competition_id, user_id) VALUES(:cid, :uid)");
+                $r = $stmt->execute([":cid" => $_POST["cid"], ":uid" => get_user_id()]);
+                if ($r) {
+                    	$stmt = $db->prepare("UPDATE F20_Competitions set reward=:reward, participants=:participants where id=:id");
+			$r = $stmt->execute([
+				":reward"=>$reward,
+				":participants"=>$participants,
+				":id" => $id
+			]);
+			
+			flash("Successfully joined competition!", "success");
+                    	die(header("Location: #"));
+               /* }
+                else {
+                    flash("There was a problem joining the competition: " . var_export($stmt->errorInfo(), true), "danger");
+                }*/
+            }
+            else {
+                flash("You can't afford to join this competition, try again later", "warning");
+            }
+        }
+        else {
+            flash("Competition is unavailable", "warning");
+        }
+    }
+    else {
+        flash("Competition is unavailable", "warning");
+    }
+}
+
+$stmt = $db->prepare("SELECT count(*) as total FROM F20_Competitions c LEFT JOIN (SELECT * FROM F20_UserCompetitions where user_id = :id) as UC on c.id = UC.competition_id WHERE paid_out = 0 ORDER BY expires ASC LIMIT 10");
 $stmt->execute([":id"=>get_user_id()]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 $total = 0;
@@ -28,7 +71,8 @@ if($result){
 }
 $total_pages = ceil($total / $per_page);
 $offset = ($page-1) * $per_page;
-$stmt = $db->prepare("SELECT c.*, UC.user_id as reg FROM F20_Competitions c LEFT JOIN (SELECT * FROM F20_UserCompetitions where user_id = :id) as UC on c.id = UC.competition_id WHERE (UC.user_id = :id OR c.user_id = :id) ORDER BY expires ASC LIMIT :offset, :count");
+
+$stmt = $db->prepare("SELECT c.*, UC.user_id as reg FROM F20_Competitions c LEFT JOIN (SELECT * FROM F20_UserCompetitions where user_id = :id) as UC on c.id = UC.competition_id WHERE paid_out = 0 ORDER BY expires ASC LIMIT :offset, :count");
 $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
 $stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
 $stmt->bindValue(":id", get_user_id());
@@ -40,22 +84,15 @@ if($e[0] != "00000"){
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
     <div class="container-fluid">
-        <h3>My Past Competitions</h3>
+        <h3>All Competitions</h3>
         <div class="list-group">
             <?php if (isset($results) && count($results)): ?>
                 <?php foreach ($results as $r): ?>
                     <div class="list-group-item">
                         <div class="row">
                             </br>
-                            <div class="col">
+			    <div class="col">
                                Comp Name: <?php safer_echo($r["name"]); ?>
-                        
-			    <?php if ($r["user_id"] == get_user_id()): ?>
-                                    (Created)
-                                <?php endif; ?>
-                            </div>
-                            <div class="col">
-                                # of Participants: <?php safer_echo($r["participants"]); ?>
                             </div>
                             <div class="col">
                                 Required Score: <?php safer_echo($r["min_score"]); ?>
@@ -66,9 +103,13 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                             <div class="col">
                                 Expires: <?php safer_echo($r["expires"]); ?>
-			    </div>
+                            </div>
+                            <div class="col">
+                                Actions:
+					<a type="button" href="edit_competitions.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
+                        		<a type="button" href="view_competitions.php?id=<?php safer_echo($r['id']); ?>">View</a>
                         </div>
-		    </div>
+                    </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="list-group-item">
@@ -77,7 +118,7 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </div>
     </div>
- <nav aria-label="Competitions">
+ <nav aria-label="All Competitions">
             <ul class="pagination justify-content-center">
                 <li class="page-item <?php echo ($page-1) < 1?"disabled":"";?>">
                     <a class="page-link" href="?page=<?php echo $page-1;?>" tabindex="-1">Previous</a>

@@ -20,9 +20,10 @@ require_once(__DIR__ . "/../lib/helpers.php");
             <li><a href="test_list_scores.php">View Scores</a></li>
 	    <li><a href="test_list_pointshistory.php">View Points History</a></li>
 	    <li><a href="create_competition.php">Create Competition</a></li>
-            <li><a href="competitions.php">Find Competitions</a></li>
+            <li><a href="competitions.php">Join Competitions</a></li>
             <li><a href="my_competitions.php">My Competitions</a></li>
             <li><a href="comp_history.php">Competition History</a></li>
+	    <li><a href="all_competitions.php">All Competitions</a></li>
 	    <li><a href="pong.html">Pong Game</a></li>
             <li><a href="logout.php">Logout</a></li>
         <?php endif; ?>

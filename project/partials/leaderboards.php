@@ -11,15 +11,15 @@ switch($type){
      case "weekly":
          $params[":currentdate"] = $currentdate;
          $params[":weekagodate"] = $weekagodate;
-         $query = "SELECT score.id,username,score.created,score FROM Scores as score JOIN Users on score.user_id = Users.id WHERE score.created BETWEEN :weekagodate AND :currentdate ORDER by score DESC, score.created ASC LIMIT 10";
+         $query = "SELECT score.id,username,score.created,score,user_id FROM Scores as score JOIN Users on score.user_id = Users.id WHERE score.created BETWEEN :weekagodate AND :currentdate ORDER by score DESC, score.created ASC LIMIT 10";
      break; 
      case "monthly":
          $params[":currentdate"] = $currentdate;
          $params[":monthagodate"] = $monthagodate;
-         $query = "SELECT score.id,username,score.created,score FROM Scores as score JOIN Users on score.user_id = Users.id WHERE score.created BETWEEN :monthagodate AND :currentdate ORDER by score DESC, score.created ASC LIMIT 10";
+         $query = "SELECT score.id,username,score.created,score,user_id FROM Scores as score JOIN Users on score.user_id = Users.id WHERE score.created BETWEEN :monthagodate AND :currentdate ORDER by score DESC, score.created ASC LIMIT 10";
      break;
      case "lifetime":
-         $query = "SELECT score.id,username,score.created,score FROM Scores as score JOIN Users on score.user_id = Users.id ORDER by score DESC, score.created ASC LIMIT 10";
+         $query = "SELECT score.id,username,score.created,score,user_id FROM Scores as score JOIN Users on score.user_id = Users.id ORDER by score DESC, score.created ASC LIMIT 10";
      break;
      default:
          flash("That leaderboard is not valid");
@@ -43,7 +43,7 @@ if(isset($query)){
       <div class="card-body">
         <div>
             <?php foreach ($scores as $r): ?>
-            <div> User: <?php safer_echo($r["username"]); ?></div>
+            <div> User: <a type="button" href="external_profile.php?id=<?php safer_echo($r['user_id']); ?>"><?php safer_echo($r["username"]); ?></a></div>
             <div> Score: <?php safer_echo($r["score"]); ?></div>
             <div> Time Achieved: <?php safer_echo($r["created"]); ?></div>
             <br>

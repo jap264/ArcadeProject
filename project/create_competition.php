@@ -78,7 +78,7 @@ if (isset($_POST["name"])) {
 }
 ?>
     <div class="container-fluid">
-        <h3>Create Competition</h3>
+        <h3>Create Competition Form</h3>
         <form method="POST">
             <div class="form-group">
                 <label for="name">Name</label>
