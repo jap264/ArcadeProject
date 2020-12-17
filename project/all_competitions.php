@@ -84,7 +84,7 @@ if($e[0] != "00000"){
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
     <div class="container-fluid">
-        <h3>Competitions</h3>
+        <h3>All Competitions</h3>
         <div class="list-group">
             <?php if (isset($results) && count($results)): ?>
                 <?php foreach ($results as $r): ?>
@@ -93,9 +93,6 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </br>
 			    <div class="col">
                                Comp Name: <?php safer_echo($r["name"]); ?>
-                            </div>
-                            <div class="col">
-                                # of Participants: <?php safer_echo($r["participants"]); ?>
                             </div>
                             <div class="col">
                                 Required Score: <?php safer_echo($r["min_score"]); ?>
@@ -121,7 +118,7 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </div>
     </div>
- <nav aria-label="Competitions">
+ <nav aria-label="All Competitions">
             <ul class="pagination justify-content-center">
                 <li class="page-item <?php echo ($page-1) < 1?"disabled":"";?>">
                     <a class="page-link" href="?page=<?php echo $page-1;?>" tabindex="-1">Previous</a>

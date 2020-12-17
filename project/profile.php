@@ -262,7 +262,9 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <label for="cpw">Confirm Password</label>
         <input type="password" name="confirm"/>
 	<label for="privacy"> 0 For Public Profile, 1 For Private Profile</label>
-	<input type="number" name="privacy"/>
+	<select type="number" name="privacy"/>
+		<option value="0">0</option>
+		<option value="1">1</option>
         <input type="submit" name="saved" value="Save Profile"/>
     </form>
 <?php require(__DIR__ . "/partials/flash.php");

@@ -28,7 +28,7 @@ if(isset($_GET["id"])){
      $params[":created"] = $created;
      $params[":expires"] = $expires;
      $db = getDB();
-     $stmt = $db->prepare("SELECT score.id,score,username,score.created FROM Scores as score JOIN Users on score.user_id = Users.id WHERE score.created BETWEEN :created AND :expires ORDER BY score DESC, score.created ASC LIMIT 10");
+     $stmt = $db->prepare("SELECT score.id,score,username,score.created,user_id FROM Scores as score JOIN Users on score.user_id = Users.id WHERE score.created BETWEEN :created AND :expires ORDER BY score DESC, score.created ASC LIMIT 10");
      $stmt->execute($params);
      $scores = $stmt->fetchAll(PDO::FETCH_ASSOC);
      $stmt->errorInfo();
@@ -43,7 +43,7 @@ if(isset($_GET["id"])){
       <div class="card-body">
         <div>
             <?php foreach ($scores as $r): ?>
-            <div> User: <?php safer_echo($r["username"]); ?></div>
+	    <div> User: <a type="button" href="external_profile.php?id=<?php safer_echo($r['user_id']); ?>"><?php safer_echo($r["username"]); ?></a></div>
             <div> Score: <?php safer_echo($r["score"]); ?></div>
             <div> Time Achieved: <?php safer_echo($r["created"]); ?></div>
             <br>

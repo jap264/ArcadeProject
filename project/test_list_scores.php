@@ -26,9 +26,9 @@ if (isset($_POST["search"]) && !empty($query)) {
         <div class="list-group">
             <?php foreach ($results as $r): ?>
                 <div class="list-group-item">
-                    <div>
+		    <div>
                         <div>User:</div>
-                        <div><?php safer_echo($r["username"]); ?></div>
+                        <div><a type="button" href="external_profile.php?id=<?php safer_echo($r['user_id']); ?>"><?php safer_echo($r["username"]); ?></a></div>
                     </div>
                     <div>
                         <div>Score:</div>
@@ -47,6 +47,7 @@ if (isset($_POST["search"]) && !empty($query)) {
                         <a type="button" href="test_view_scores.php?id=<?php safer_echo($r['id']); ?>">View</a>
                     </div>
                 </div>
+		</br>
             <?php endforeach; ?>
         </div>
     <?php else: ?>
